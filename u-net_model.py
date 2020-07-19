@@ -2,6 +2,11 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import load_model
 
+#you need to use this on your laptop to prevent memory overload
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
+
 
 import os
 import random
@@ -124,10 +129,8 @@ model = tf.keras.Model(inputs=[inputs], outputs=[outputs])
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 model.summary()
 
-# code modified from python for microscopists
-
-# Model checkpoint
-
+################################
+#Modelcheckpoint
 checkpointer = tf.keras.callbacks.ModelCheckpoint('model_for_nuclei.h5', verbose=1, save_best_only=True)
 
 callbacks = [
@@ -135,7 +138,9 @@ callbacks = [
         tf.keras.callbacks.TensorBoard(log_dir='logs')]
 
 results = model.fit(X_train, Y_train, validation_split=0.1, batch_size=16, epochs=25, callbacks=callbacks)
-#
+
+####################################
+
 
 idx = random.randint(0, len(X_train))
 
@@ -167,4 +172,5 @@ imshow(np.squeeze(preds_val_t[ix]))
 plt.show()
 
 
-
+# command to open tensorboard on host 8088
+# !tensorboard --logdir=logs --host localhost --port 8088
